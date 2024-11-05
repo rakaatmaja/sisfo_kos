@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catatan Listrik Kos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-4 text-center">Catatan Listrik Kos</h1>
+        <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div id="catatanList" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <script>
+        async function loadCatatan() {
+            try {
+                const response = await fetch('/catatan');
+                if (!response.ok) throw new Error('Network response was not ok');
+                
+                const catatan = await response.json();
+                console.log(catatan); // Log data untuk memeriksa
+                const catatanList = document.getElementById('catatanList');
+                catatanList.innerHTML = ''; // Clear existing list
+
+                catatan.forEach(item => {
+                    const penguranganKwh = item.kwhBulanIni - item.kwhBulanLalu;
+                    const biayaAir = 30; // Biaya air tetap 30
+                    const totalBiaya = penguranganKwh * 3 + biayaAir;
+
+                    const card = `
+                        <div class="bg-white p-4 rounded-lg text-md shadow-md hover:shadow-lg transition-all duration-200">
+                            <div class="text-xl font-semibold text-center mb-4">NOMOR KAMAR: ${item.id}</div>
+                            <!-- Nama Penyewa dan Nomor Kamar -->
+                            <div class="bg-gray-100 p-4 rounded-md">
+                                <div><strong>Nama Penyewa:</strong> ${item.nama}</div>
+                                <div><strong>Nomor Kamar:</strong> ${item.nomorKamar}</div>
+                            </div>
+                            <!-- KWh Bulan Ini, KWh Bulan Lalu, dan Pengurangan KWh -->
+                            <div class="bg-blue-100 p-4 rounded-md mt-4">
+                                <div><strong>KWh Bulan Ini:</strong> ${item.kwhBulanIni}</div>
+                                <div><strong>KWh Bulan Lalu:</strong> ${item.kwhBulanLalu}</div>
+                                <div><strong>Pengurangan KWh:</strong> ${penguranganKwh}</div>
+                            </div>
+                            <!-- Biaya Air -->
+                            <div class="bg-yellow-100 p-4 rounded-md mt-4 text-center">
+                                <strong>Biaya Air:</strong> Rp ${biayaAir} ribu
+                            </div>
+                            <!-- Total Biaya -->
+                            <div class="bg-green-100 p-4 rounded-md mt-4 text-center">
+                                <strong>Total Biaya:</strong> ${penguranganKwh} x 3 + ${biayaAir} = ${totalBiaya} ribu
+                            </div>
+                        </div>
+                    `;
+                    catatanList.innerHTML += card;
+                });
+            } catch (error) {
+                console.error('Failed to load catatan:', error);
+            }
+        }
+
+        // Memuat catatan saat halaman dimuat
+        window.onload = loadCatatan;
+    </script>
+</body>
+</html>

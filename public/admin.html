@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Catatan Listrik Kos</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+
+<body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-4">Admin - Catatan Listrik Kos</h1>
+
+        <!-- Tombol untuk membuka modal tambah kamar -->
+        <button onclick="toggleModal('tambahKamarModal')" class="bg-blue-500 text-white px-4 py-2 mb-4">Tambah
+            Kamar</button>
+        <button onclick="toggleModal('updateKwhModal')" class="bg-green-500 text-white px-4 py-2 mb-4">Update
+            KWh</button>
+
+        <!-- Modal Tambah Kamar -->
+        <div id="tambahKamarModal"
+            class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-lg w-full sm:w-11/12 md:w-1/3">
+                <h2 class="text-xl mb-2">Tambah Kamar</h2>
+                <input type="text" id="nama" class="border p-2 mb-2 w-full" placeholder="Nama Penyewa" required>
+                <input type="text" id="nomorKamar" class="border p-2 mb-2 w-full" placeholder="Nomor Kamar" required>
+                <button onclick="tambahKamar()" class="bg-blue-500 text-white px-4 py-2">Tambah Kamar</button>
+                <button onclick="toggleModal('tambahKamarModal')"
+                    class="bg-red-500 text-white px-4 py-2 mt-2">Tutup</button>
+            </div>
+        </div>
+
+        <!-- Modal Update KWh -->
+        <div id="updateKwhModal"
+            class="fixed inset-0 bg-gray-600 bg-opacity-50 hidden items-center justify-center z-50">
+            <div class="bg-white p-6 rounded-lg w-full sm:w-11/12 md:w-1/3">
+                <h2 class="text-xl mb-2">Update KWh Kamar</h2>
+                <input type="number" id="kamarId" class="border p-2 mb-2 w-full" placeholder="ID Kamar (1-10)" required>
+                <input type="number" id="kwhBulanIni" class="border p-2 mb-2 w-full" placeholder="KWh Bulan Ini"
+                    required>
+                <input type="number" id="kwhBulanLalu" class="border p-2 mb-2 w-full" placeholder="KWh Bulan Lalu"
+                    required>
+                <button onclick="updateKwh()" class="bg-blue-500 text-white px-4 py-2">Perbarui KWh</button>
+                <button onclick="toggleModal('updateKwhModal')"
+                    class="bg-red-500 text-white px-4 py-2 mt-2">Tutup</button>
+            </div>
+        </div>
+
+        <!-- Daftar Kamar -->
+        <h2 class="text-xl mb-2">Daftar Kamar</h2>
+        <table class="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <thead>
+                <tr class="bg-gray-200 text-gray-600 uppercase text-sm leading-normal">
+                    <th class="py-3 px-4 text-left">ID</th>
+                    <th class="py-3 px-4 text-left">Nama Penyewa</th>
+                    <th class="py-3 px-4 text-left">Nomor Kamar</th>
+                    <th class="py-3 px-4 text-left">Aksi</th>
+                </tr>
+            </thead>
+            <tbody id="kamarList"></tbody>
+        </table>
+    </div>
+
+    <script>
+        // Fungsi untuk menampilkan atau menyembunyikan modal
+        function toggleModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.classList.toggle('hidden');
+        }
+
+        async function tambahKamar() {
+            const nama = document.getElementById('nama').value;
+            const nomorKamar = document.getElementById('nomorKamar').value;
+
+            const response = await fetch('/tambah-kamar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ nama, nomorKamar }),
+            });
+
+            const data = await response.json();
+            alert(data.message);
+            loadKamar(); // Reload kamar list
+            toggleModal('tambahKamarModal'); // Tutup modal setelah submit
+        }
+
+        async function updateKwh() {
+            const id = document.getElementById('kamarId').value;
+            const kwhBulanIni = document.getElementById('kwhBulanIni').value;
+            const kwhBulanLalu = document.getElementById('kwhBulanLalu').value;
+
+            const response = await fetch('/update-kwh', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ id, kwhBulanIni, kwhBulanLalu }),
+            });
+
+            const data = await response.json();
+            alert(data.message);
+            loadKamar();
+            toggleModal('updateKwhModal'); // Tutup modal setelah submit
+        }
+
+        async function loadKamar() {
+            const response = await fetch('/kamar');
+            const kamar = await response.json();
+            const kamarList = document.getElementById('kamarList');
+            kamarList.innerHTML = '';
+
+            kamar.forEach(item => {
+                const row = `<tr>
+                    <td class="py-3 px-4">${item.id}</td>
+                    <td class="py-3 px-4">${item.nama}</td>
+                    <td class="py-3 px-4">${item.nomorKamar}</td>
+                    <td class="py-3 px-4">
+                        <button onclick="hapusKamar(${item.id})" class="bg-red-500 text-white px-2 py-1">Hapus</button>
+                    </td>
+                </tr>`;
+                kamarList.innerHTML += row;
+            });
+        }
+
+        // Fungsi untuk menghapus kamar
+        async function hapusKamar(id) {
+            const response = await fetch(`/hapus-kamar/${id}`, {
+                method: 'DELETE',
+            });
+
+            const data = await response.json();
+            alert(data.message); // Tampilkan pesan konfirmasi
+
+            if (response.ok) {
+                loadKamar(); // Reload daftar kamar setelah berhasil menghapus
+            }
+        }
+
+        // Memuat kamar saat halaman dimuat
+        window.onload = loadKamar;
+    </script>
+</body>
+
+</html>
