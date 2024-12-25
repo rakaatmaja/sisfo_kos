@@ -1,16 +1,21 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catatan Listrik Kos</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-100">
+
     <div class="container mx-auto p-6">
-        <h1 class="text-2xl font-bold mb-4 text-center">Catatan Listrik Kos</h1>
-        <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div id="catatanList" class="space-y-4"></div>
+        <h1 class="text-3xl font-bold mb-8 text-center text-blue-600">Catatan Listrik Kos</h1>
+
+        <!-- Grid layout dengan 4 kolom pada layar besar -->
+        <div class="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            <div id="catatanList" class="space-y-8"></div>
         </div>
     </div>
 
@@ -19,33 +24,53 @@
             try {
                 const response = await fetch('/kamar');
                 if (!response.ok) throw new Error('Network response was not ok');
-    
+
                 const catatan = await response.json();
                 const catatanList = document.getElementById('catatanList');
                 catatanList.innerHTML = ''; // Clear existing list
-    
+
                 catatan.forEach(item => {
                     const penguranganKwh = item.kwhBulanIni - item.kwhBulanLalu;
                     const biayaAir = 30; // Biaya air tetap 30
                     const totalBiaya = penguranganKwh * 3 + biayaAir;
-    
+
+                    // Tentukan warna card berdasarkan total biaya
+                    let cardColorClass = '';
+                    if (totalBiaya < 50) {
+                        cardColorClass = 'bg-green-100';  // Biaya rendah - Hijau Muda
+                    } else if (totalBiaya >= 50 && totalBiaya <= 100) {
+                        cardColorClass = 'bg-yellow-100';  // Biaya sedang - Kuning Muda
+                    } else {
+                        cardColorClass = 'bg-red-100';  // Biaya tinggi - Merah Muda
+                    }
+
                     const card = `
-                        <div class="bg-white p-4 rounded-lg text-md shadow-md hover:shadow-lg transition-all duration-200">
-                            <div class="text-xl font-semibold text-center mb-4">NOMOR KAMAR: ${item.kamarId}</div>
-                            <div class="bg-gray-100 p-4 rounded-md">
-                                <div><strong>Nama Penyewa:</strong> ${item.nama}</div>
-                                <div><strong>Nomor Kamar:</strong> ${item.kamarId}</div>
+                        <div class="p-6 rounded-lg text-md shadow-lg hover:shadow-2xl transition-all duration-300 ${cardColorClass}">
+                            
+                            <!-- Nama Penyewa dengan background soft -->
+                            <div class="text-2xl font-bold text-center text-white bg-gray-600 py-2 rounded-md mb-4">
+                                ${item.nama}
+                                 <div class="text-xl font-semibold text-center text-white bg-gray-600 py-1 rounded-md">
+                                No Kamar: ${item.kamarId}
+                                    </div>                       
                             </div>
-                            <div class="bg-blue-100 p-4 rounded-md mt-4">
-                                <div><strong>KWh Bulan Ini:</strong> ${item.kwhBulanIni}</div>
-                                <div><strong>KWh Bulan Lalu:</strong> ${item.kwhBulanLalu}</div>
-                                <div><strong>Pengurangan KWh:</strong> ${penguranganKwh}</div>
+                            
+                            <!-- Bagian Pengurangan KWh dan Biaya -->
+                            <div class="p-4 bg-white rounded-md shadow-sm mb-4">
+                                <div class="text-gray-600"><strong>KWh Bulan Ini:</strong> ${item.kwhBulanIni}</div>
+                                <div class="text-gray-600"><strong>KWh Bulan Lalu:</strong> ${item.kwhBulanLalu}</div>
+                                <div class="text-gray-600 font-bold"><strong>Pengurangan KWh:</strong> ${penguranganKwh}</div>
                             </div>
-                            <div class="bg-yellow-100 p-4 rounded-md mt-4 text-center">
-                                <strong>Biaya Air:</strong> Rp ${biayaAir} ribu
+    
+                            <!-- Biaya Air -->
+                            <div class="p-4 bg-white rounded-md shadow-sm mb-4 text-center">
+                                <div class="text-gray-700"><strong>Biaya Air:</strong> Rp ${biayaAir} ribu</div>
                             </div>
-                            <div class="bg-green-100 p-4 rounded-md mt-4 text-center">
-                                <strong>Total Biaya:</strong> ${penguranganKwh} x 3 + ${biayaAir} = ${totalBiaya} ribu
+
+                            <!-- Total Biaya -->
+                            <div class="p-4 rounded-md text-center bg-blue-100">
+                                <strong class="text-xl text-gray-900">Total Biaya: ${penguranganKwh} X 3 + ${biayaAir} </strong>
+                                <div class="text-2xl font-semibold text-gray-800 mt-2">Rp ${totalBiaya} ribu</div>
                             </div>
                         </div>
                     `;
@@ -53,11 +78,14 @@
                 });
             } catch (error) {
                 console.error('Failed to load catatan:', error);
+                const catatanList = document.getElementById('catatanList');
+                catatanList.innerHTML = '<p class="text-red-500">Gagal memuat data. Silakan coba lagi nanti.</p>';
             }
         }
-    
+
         window.onload = loadCatatan;
     </script>
-    
+
 </body>
+
 </html>
