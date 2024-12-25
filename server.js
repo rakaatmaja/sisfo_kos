@@ -13,6 +13,11 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // Halaman admin
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Halaman admin
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
 });
