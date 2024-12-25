@@ -17,38 +17,33 @@
     <script>
         async function loadCatatan() {
             try {
-                const response = await fetch('/catatan');
+                const response = await fetch('/kamar');
                 if (!response.ok) throw new Error('Network response was not ok');
-                
+    
                 const catatan = await response.json();
-                console.log(catatan); // Log data untuk memeriksa
                 const catatanList = document.getElementById('catatanList');
                 catatanList.innerHTML = ''; // Clear existing list
-
+    
                 catatan.forEach(item => {
                     const penguranganKwh = item.kwhBulanIni - item.kwhBulanLalu;
                     const biayaAir = 30; // Biaya air tetap 30
                     const totalBiaya = penguranganKwh * 3 + biayaAir;
-
+    
                     const card = `
                         <div class="bg-white p-4 rounded-lg text-md shadow-md hover:shadow-lg transition-all duration-200">
-                            <div class="text-xl font-semibold text-center mb-4">NOMOR KAMAR: ${item.id}</div>
-                            <!-- Nama Penyewa dan Nomor Kamar -->
+                            <div class="text-xl font-semibold text-center mb-4">NOMOR KAMAR: ${item.kamarId}</div>
                             <div class="bg-gray-100 p-4 rounded-md">
                                 <div><strong>Nama Penyewa:</strong> ${item.nama}</div>
-                                <div><strong>Nomor Kamar:</strong> ${item.nomorKamar}</div>
+                                <div><strong>Nomor Kamar:</strong> ${item.kamarId}</div>
                             </div>
-                            <!-- KWh Bulan Ini, KWh Bulan Lalu, dan Pengurangan KWh -->
                             <div class="bg-blue-100 p-4 rounded-md mt-4">
                                 <div><strong>KWh Bulan Ini:</strong> ${item.kwhBulanIni}</div>
                                 <div><strong>KWh Bulan Lalu:</strong> ${item.kwhBulanLalu}</div>
                                 <div><strong>Pengurangan KWh:</strong> ${penguranganKwh}</div>
                             </div>
-                            <!-- Biaya Air -->
                             <div class="bg-yellow-100 p-4 rounded-md mt-4 text-center">
                                 <strong>Biaya Air:</strong> Rp ${biayaAir} ribu
                             </div>
-                            <!-- Total Biaya -->
                             <div class="bg-green-100 p-4 rounded-md mt-4 text-center">
                                 <strong>Total Biaya:</strong> ${penguranganKwh} x 3 + ${biayaAir} = ${totalBiaya} ribu
                             </div>
@@ -60,9 +55,9 @@
                 console.error('Failed to load catatan:', error);
             }
         }
-
-        // Memuat catatan saat halaman dimuat
+    
         window.onload = loadCatatan;
     </script>
+    
 </body>
 </html>
