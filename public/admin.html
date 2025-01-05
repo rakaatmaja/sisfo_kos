@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Siskos - Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
+
 <body class="bg-gray-50">
     <div class="max-w-6xl mx-auto p-4 sm:p-6 lg:p-8">
         <header class="mb-8">
@@ -13,8 +15,8 @@
         </header>
 
         <div class="mb-6 flex gap-4">
-            <button onclick="toggleModal('tambahKamarModal')" 
-                    class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+            <button onclick="toggleModal('tambahKamarModal')"
+                class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
                 Add Room
             </button>
         </div>
@@ -24,9 +26,12 @@
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tenant</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Room
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Tenant</th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Actions</th>
                     </tr>
                 </thead>
                 <tbody id="kamarList" class="divide-y divide-gray-200"></tbody>
@@ -39,14 +44,15 @@
                 <h2 class="text-xl font-semibold mb-4">Add New Room</h2>
                 <div class="space-y-4">
                     <input type="text" id="nama" class="w-full px-3 py-2 border rounded-lg" placeholder="Tenant Name">
-                    <input type="text" id="kamarId" class="w-full px-3 py-2 border rounded-lg" placeholder="Room Number">
+                    <input type="text" id="kamarId" class="w-full px-3 py-2 border rounded-lg"
+                        placeholder="Room Number">
                     <div class="flex gap-3">
-                        <button onclick="tambahKamar()" 
-                                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        <button onclick="tambahKamar()"
+                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
                             Add
                         </button>
-                        <button onclick="toggleModal('tambahKamarModal')" 
-                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-colors">
+                        <button onclick="toggleModal('tambahKamarModal')"
+                            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-colors">
                             Cancel
                         </button>
                     </div>
@@ -60,15 +66,17 @@
                 <h2 class="text-xl font-semibold mb-4">Update Electricity Usage</h2>
                 <div class="space-y-4">
                     <input type="hidden" id="updateKamarId">
-                    <input type="number" id="kwhBulanIni" class="w-full px-3 py-2 border rounded-lg" placeholder="Current Month kWh">
-                    <input type="number" id="kwhBulanLalu" class="w-full px-3 py-2 border rounded-lg" placeholder="Previous Month kWh">
+                    <input type="number" id="kwhBulanIni" class="w-full px-3 py-2 border rounded-lg"
+                        placeholder="Current Month kWh">
+                    <input type="number" id="kwhBulanLalu" class="w-full px-3 py-2 border rounded-lg"
+                        placeholder="Previous Month kWh">
                     <div class="flex gap-3">
-                        <button onclick="updateKwh()" 
-                                class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
+                        <button onclick="updateKwh()"
+                            class="flex-1 bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg transition-colors">
                             Update
                         </button>
-                        <button onclick="toggleModal('updateKwhModal')" 
-                                class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-colors">
+                        <button onclick="toggleModal('updateKwhModal')"
+                            class="flex-1 bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg transition-colors">
                             Cancel
                         </button>
                     </div>
@@ -120,6 +128,10 @@
                 alert(data.message);
                 loadKamar();
                 toggleModal('updateKwhModal');
+
+                document.getElementById('updateKamarId').value = '';
+                document.getElementById('kwhBulanIni').value = '';
+                document.getElementById('kwhBulanLalu').value = '';
             } catch (error) {
                 alert('Error: ' + error.message);
             }
@@ -180,4 +192,5 @@
         window.onload = loadKamar;
     </script>
 </body>
+
 </html>
